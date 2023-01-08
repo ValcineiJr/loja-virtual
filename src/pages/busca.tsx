@@ -6,27 +6,19 @@ import Layout from '@/components/Layout';
 import Pagination from '@/components/Pagination';
 
 import { Container } from '@/styles/pages/Busca';
-import { useProduct } from '@/hooks/useProduct';
-import { gamesType } from '@/contexts/ProductContext';
-import { TailSpin } from 'react-loader-spinner';
 
-const Busca: React.FC = () => {
+import { gamesType } from '@/contexts/ProductContext';
+
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { child, get, getDatabase, ref } from 'firebase/database';
+
+const Busca = ({
+  gameList,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router: any = useRouter();
   const searchTerm: string = router.query?.q;
 
-  const [gameList, setGameList] = useState<gamesType[]>([]);
   const [filteredGamesList, setFilteredGamesList] = useState<gamesType[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const { getAllProducts } = useProduct();
-
-  useEffect(() => {
-    async function getData() {
-      await getAllProducts(setGameList, setLoading);
-    }
-
-    getData();
-  }, []);
 
   useEffect(() => {
     if (searchTerm) {
@@ -57,22 +49,7 @@ const Busca: React.FC = () => {
           </ul>
         </div>
 
-        {loading && (
-          <div className="loading">
-            <TailSpin
-              height="40"
-              width="40"
-              color="#D90429"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          </div>
-        )}
-
-        {!loading && filteredGamesList.length === 0 ? (
+        {filteredGamesList.length === 0 ? (
           <div className="empty-content">
             <p>Nenhum game encontrado.</p>
           </div>
@@ -85,3 +62,27 @@ const Busca: React.FC = () => {
 };
 
 export default Busca;
+
+export const getServerSideProps: GetServerSideProps<{
+  gameList: gamesType[];
+}> = async ({ res }) => {
+  res.setHeader(
+    `Cache-Control`,
+    `public, s-maxage=10, stale-while-revalidate=59`,
+  );
+
+  let gameList: gamesType[] = [];
+
+  const dbRef = ref(getDatabase());
+
+  const response = await get(child(dbRef, `products/`));
+  if (response.exists()) {
+    gameList = Object.values(response.val());
+  }
+
+  return {
+    props: {
+      gameList,
+    },
+  };
+};

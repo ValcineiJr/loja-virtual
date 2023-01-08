@@ -10,27 +10,19 @@ import Pagination from '@/components/Pagination';
 import { useProduct } from '@/hooks/useProduct';
 import { gamesType } from '@/contexts/ProductContext';
 
-import { TailSpin } from 'react-loader-spinner';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { child, get, getDatabase, ref } from 'firebase/database';
 
-const Products: React.FC = () => {
+const Products = ({
+  gameList,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { category, subcategory }: any = router.query;
   const formattedsubcategory = subcategory?.replace(`-`, ` `);
 
-  const [gameList, setGameList] = useState<gamesType[]>([]);
-  const [loading, setLoading] = useState(false);
-
   const [filteredGameList, setFilteredGameList] = useState<gamesType[]>([]);
 
-  const { getAllProducts, categories } = useProduct();
-
-  useEffect(() => {
-    async function getData() {
-      await getAllProducts(setGameList, setLoading);
-    }
-
-    getData();
-  }, []);
+  const { categories } = useProduct();
 
   useEffect(() => {
     const filteredCategories = categories?.filter(
@@ -63,21 +55,8 @@ const Products: React.FC = () => {
           <option value="none">Escolher ordem</option>
           <option value="none">Mais antigo</option>
         </select> */}
-        {loading && (
-          <div className="loading">
-            <TailSpin
-              height="40"
-              width="40"
-              color="#D90429"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          </div>
-        )}
-        {!loading && filteredGameList.length === 0 ? (
+
+        {filteredGameList.length === 0 ? (
           <div className="empty-content">
             <p>Nenhum game encontrado para essa plataforma.</p>
           </div>
@@ -90,3 +69,27 @@ const Products: React.FC = () => {
 };
 
 export default Products;
+
+export const getServerSideProps: GetServerSideProps<{
+  gameList: gamesType[];
+}> = async ({ res }) => {
+  res.setHeader(
+    `Cache-Control`,
+    `public, s-maxage=10, stale-while-revalidate=59`,
+  );
+
+  let gameList: gamesType[] = [];
+
+  const dbRef = ref(getDatabase());
+
+  const response = await get(child(dbRef, `products/`));
+  if (response.exists()) {
+    gameList = Object.values(response.val());
+  }
+
+  return {
+    props: {
+      gameList,
+    },
+  };
+};
