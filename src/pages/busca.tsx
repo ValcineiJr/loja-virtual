@@ -29,11 +29,15 @@ const Busca: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setFilteredGamesList(
-      gameList.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm?.toLowerCase()),
-      ),
-    );
+    if (searchTerm) {
+      setFilteredGamesList(
+        gameList.filter((item) =>
+          item.name.toLowerCase().includes(searchTerm?.toLowerCase()),
+        ),
+      );
+    } else {
+      setFilteredGamesList(gameList);
+    }
   }, [gameList, searchTerm]);
 
   return (
@@ -44,8 +48,12 @@ const Busca: React.FC = () => {
             <li className="bold">Página Inicial</li>
             <span>{`>`}</span>
             <li className="bold">Resultado da busca</li>
-            <span>{`>`}</span>
-            <li>{searchTerm}</li>
+            {searchTerm && (
+              <>
+                <span>{`>`}</span>
+                <li>{searchTerm}</li>
+              </>
+            )}
           </ul>
         </div>
 

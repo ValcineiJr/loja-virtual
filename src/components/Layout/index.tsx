@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { ReactNode, useState, useEffect } from 'react';
 
+import cn from 'classnames';
+
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -18,6 +20,8 @@ import {
 import { Container } from './styles';
 
 import { menuItens } from '@/utils/dummyData';
+import AlertBox from '../AlertBox';
+import { useAlert } from '@/hooks/useAlert';
 
 type LayoutProps = {
   children: ReactNode;
@@ -30,6 +34,7 @@ type SubMenusProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const router = useRouter();
+  const { showAlert, messageAlert, typeAlert } = useAlert();
 
   const [toggle, setToggle] = useState(false);
   const [searchTerm, setSearchTerm] = useState(``);
@@ -61,12 +66,12 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <Container toggle={toggle} toggleSubmenu={toggleSubmenu}>
       <header>
-        <div className="row">
-          <button onClick={toggleMenu} className="menu">
+        <div className="row one">
+          <button onClick={toggleMenu} className="menu menu-mobile">
             <FaBars />
           </button>
 
-          <Link href={`/`}>
+          <Link href={`/`} className="logo">
             <div className="brand">
               <p>Salão de</p>
               <p style={{ fontSize: `4.4rem`, fontWeight: `bold` }}>Jogos</p>
@@ -77,7 +82,7 @@ const Layout = ({ children }: LayoutProps) => {
           <nav>
             <ul>
               <li className="login-button">
-                <Link href={`create`}>
+                <Link href={`/login`}>
                   <FaUserAlt />
                   <div className="separator">
                     <p>Faça seu login</p>
@@ -102,7 +107,7 @@ const Layout = ({ children }: LayoutProps) => {
               ))}
             </ul>
           </nav>
-          <Link href={`/carrinho`} className="menu">
+          <Link href={`/carrinho`} className="menu mobile-cart">
             <FaShoppingCart />
           </Link>
           <div className="sub-menu">
@@ -120,7 +125,7 @@ const Layout = ({ children }: LayoutProps) => {
             </ul>
           </div>
         </div>
-        <div className="row">
+        <div className="row two">
           <div className="input">
             <input
               type="text"
@@ -139,8 +144,85 @@ const Layout = ({ children }: LayoutProps) => {
             </Link>
           </div>
         </div>
+        <div className="row three">
+          <Link className="login-button login" href={`/login`}>
+            <FaUserAlt className="color icon" />
+            <div className="separator">
+              <p>
+                Faça seu <span className="color">login</span>
+              </p>
+              <p>
+                ou <span className="color">cadastre-se</span>
+              </p>
+            </div>
+          </Link>
+
+          <Link href={`/carrinho`} className="menu cart">
+            <FaShoppingCart />
+          </Link>
+        </div>
       </header>
-      <div className="wrapper container">{children}</div>
+      <nav className="desktop-menu">
+        <ul>
+          {menuItens.map((item) => (
+            <li
+              className="menu"
+              key={item.label}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = `#D90429`;
+                e.currentTarget.children[1].setAttribute(`id`, `show`);
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = `#2B2D42`;
+                e.currentTarget.children[1].removeAttribute(`id`);
+              }}
+            >
+              <span className="link">{item.label}</span>
+              <div className="sub-menu">
+                <ul>
+                  {item.submenus.map((item, index) => (
+                    <li
+                      className={cn({ sub: index === 0 })}
+                      key={item.label}
+                      onMouseOver={(e) => {
+                        if (e.currentTarget.children[1])
+                          e.currentTarget.children[1].setAttribute(
+                            `id`,
+                            `show`,
+                          );
+                      }}
+                      onMouseLeave={(e) => {
+                        if (e.currentTarget.children[1])
+                          e.currentTarget.children[1].removeAttribute(`id`);
+                      }}
+                    >
+                      <Link href={item.href}>{item.label}</Link>
+                      {/* <FaChevronRight /> */}
+                      {index === 0 && (
+                        <div className="sub-sub-menu">
+                          <ul>
+                            <li>Acessórios</li>
+                            <li>Consoles</li>
+                            <li>Jogos</li>
+                          </ul>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className="wrapper container">
+        <AlertBox
+          type={typeAlert}
+          showAlert={showAlert}
+          message={messageAlert}
+        />
+        {children}
+      </div>
 
       <footer>
         <div className="wrapper">

@@ -6,8 +6,6 @@ import React, { useState, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 
-import { useFetch } from '@/hooks/useFetch';
-
 import Layout from '@/components/Layout';
 
 import { Container } from '@/styles/pages/Product';
@@ -24,21 +22,23 @@ import { useProduct } from '@/hooks/useProduct';
 import { gamesType } from '@/contexts/ProductContext';
 import { useCart } from '@/hooks/useCart';
 import Link from 'next/link';
+import { child, get, getDatabase, ref } from 'firebase/database';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 
-const produto: React.FC = () => {
+const produto = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
   const [cep, setCep] = useState(``);
 
   const [loadingCep, setLoadingCep] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [open, setOpen] = useState(false);
   const [freteList, setFreteList] = useState<FreteData[]>([]);
 
-  const { id } = router.query;
-  const { data } = useFetch<gamesType>(
-    `api/product/read/product/${id}`,
-    setLoading,
-  );
+  // const { id } = router.query;
+  // const { data } = useFetch<gamesType>(
+  //   `api/product/read/product/${id}`,
+  //   setLoading,
+  // );
 
   const { categories, addItemsToRecents } = useProduct();
   const { cart, setCartToStorage, setFrete } = useCart();
@@ -109,57 +109,67 @@ const produto: React.FC = () => {
       ) : (
         <>
           <Container>
-            <img src={data.banner} alt="" />
-            <div className="info">
-              <p>{data.name}</p>
-              <p>{formatter(data.price)}</p>
-              <button onClick={handleAddItemToCart} className="site-button">
-                Comprar
-              </button>
-            </div>
-
-            <p>Compra 100% segura.</p>
-            <p>
-              Pagamentos auditados pelo <span className="bold">PayPal</span>
-            </p>
-
-            <div className="frete">
-              <p>Calcule o frete</p>
-              <div className="input">
-                <input
-                  value={cep}
-                  maxLength={8}
-                  onChange={(e) => setCep(e.target.value)}
-                  type="text"
-                  placeholder="CEP"
-                />
-                <button onClick={handleCalculateShipping}>Calcular</button>
+            <div className="wrapper">
+              <div className="image">
+                <img className="banner" src={data.banner} alt="" />
               </div>
-              {loadingCep && (
-                <div className="loading">
-                  <TailSpin
-                    height="40"
-                    width="40"
-                    color="#D90429"
-                    ariaLabel="tail-spin-loading"
-                    radius="1"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                    visible={true}
-                  />
+
+              <div className="separator">
+                <div className="info">
+                  <p>{data.name}</p>
+                  <p>{formatter(data.price)}</p>
+                  <button onClick={handleAddItemToCart} className="site-button">
+                    Comprar
+                  </button>
                 </div>
-              )}
-              {freteList.length > 0 && (
-                <ul className="frete-box">
-                  {freteList.map((item) => (
-                    <li key={`Correios SEDEX`}>
-                      <span>{item.Valor}</span>
-                      <strong>{item.PrazoEntrega} dias uteis</strong>
-                      <span>Correios SEDEX</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+
+                <div>
+                  <p>Compra 100% segura.</p>
+                  <p>
+                    Pagamentos auditados pelo
+                    <span className="bold">PayPal</span>
+                  </p>
+                </div>
+
+                <div className="frete">
+                  <p>Calcule o frete</p>
+                  <div className="input">
+                    <input
+                      value={cep}
+                      maxLength={8}
+                      onChange={(e) => setCep(e.target.value)}
+                      type="text"
+                      placeholder="CEP"
+                    />
+                    <button onClick={handleCalculateShipping}>Calcular</button>
+                  </div>
+                  {loadingCep && (
+                    <div className="loading">
+                      <TailSpin
+                        height="40"
+                        width="40"
+                        color="#D90429"
+                        ariaLabel="tail-spin-loading"
+                        radius="1"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  )}
+                  {freteList.length > 0 && (
+                    <ul className="frete-box">
+                      {freteList.map((item) => (
+                        <li key={`Correios SEDEX`}>
+                          <span>{item.Valor}</span>
+                          <strong>{item.PrazoEntrega} dias uteis</strong>
+                          <span>Correios SEDEX</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="message">
@@ -246,8 +256,8 @@ const produto: React.FC = () => {
               <ul className="espec">
                 <li>
                   {categories
-                    .filter((item) => item.id === data.sub_category_id)[0]
-                    .name.replace(`-`, ` `)}
+                    ?.filter((item) => item.id === data.sub_category_id)[0]
+                    ?.name.replace(`-`, ` `)}
                 </li>
               </ul>
             </div>
@@ -272,3 +282,37 @@ const produto: React.FC = () => {
 };
 
 export default produto;
+
+export async function getStaticPaths() {
+  let dataArray: gamesType[] = [];
+
+  const dbRef = ref(getDatabase());
+
+  const response = await get(child(dbRef, `products/`));
+  if (response.exists()) {
+    dataArray = Object.values(response.val());
+  }
+
+  const paths = dataArray.map((post) => ({
+    params: { id: post.id },
+  }));
+
+  return {
+    paths,
+    fallback: false, // can also be true or 'blocking'
+  };
+}
+
+export const getStaticProps: GetStaticProps<{
+  data: gamesType;
+}> = async (context) => {
+  const res = await fetch(
+    `http://localhost:3000/api/product/read/product/${context?.params?.id}`,
+  );
+  const data = await res.json();
+
+  return {
+    // Passed to the page component as props
+    props: { data },
+  };
+};

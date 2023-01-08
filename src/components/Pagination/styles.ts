@@ -14,6 +14,14 @@ export const ItemsContainer = styled.div`
 
   .image {
     border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+
+    max-height: 276px;
+    width: 276px;
+
+    img {
+      max-height: 276px;
+      width: 276px;
+    }
   }
 
   .item {

@@ -1,6 +1,7 @@
 const menuItens = [
   {
     label: `Playstation`,
+    category_id: `a7f4285b-00ae-4896-8bad-2a51854e2c8d`,
 
     submenus: [
       {
@@ -27,6 +28,7 @@ const menuItens = [
   },
   {
     label: `Xbox`,
+    category_id: `3150c182-3746-4956-a5e8-7af3bf8b4110`,
     submenus: [
       {
         label: `Xbox`,
@@ -44,6 +46,7 @@ const menuItens = [
   },
   {
     label: `Nintendo`,
+    category_id: `3`,
     submenus: [
       {
         label: `Game Boy`,
@@ -61,6 +64,7 @@ const menuItens = [
   },
   {
     label: `Clássicos`,
+    category_id: `4`,
     submenus: [
       {
         label: `Atari`,

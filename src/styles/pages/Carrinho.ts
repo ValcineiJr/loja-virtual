@@ -8,6 +8,28 @@ export const Container = styled.div`
     padding: 0;
     display: flex;
     flex-direction: column;
+
+    width: 100%;
+
+    gap: 30px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+    }
+
+    aside,
+    section {
+      flex: 1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-cart {
+      width: 100%;
+      max-width: 1000px;
+
+      margin: 0 auto;
+    }
   }
 
   h1 {

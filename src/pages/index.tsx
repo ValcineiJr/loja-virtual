@@ -2,6 +2,9 @@
 import { useState } from 'react';
 
 import { useTheme } from 'styled-components';
+import { useProduct } from '@/hooks/useProduct';
+
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 import Link from 'next/link';
 
@@ -19,24 +22,28 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-coverflow';
 
 import { Container } from '@/styles/pages/Home';
-import {
-  menuItens,
-  PopularSections,
-  newGames,
-  oldGames,
-} from '@/utils/dummyData';
+import { menuItens, newGames, oldGames } from '@/utils/dummyData';
 
 import formatter from '@/utils/CurrencyFormatter';
+import { child, get, getDatabase, ref } from 'firebase/database';
 
-export default function Home() {
-  const [popularSectionLabel, setPopularSectionLabel] = useState(`Playstation`);
-  const [popularSection] = useState(PopularSections);
+import { gamesType } from '@/contexts/ProductContext';
+
+export default function Home({
+  dataArray,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [popularSectionID, setPopularSectionID] = useState(
+    `a7f4285b-00ae-4896-8bad-2a51854e2c8d`,
+  );
 
   const { colors } = useTheme();
+  const { categories } = useProduct();
 
   const handleChangePopularSection = (section: string) => {
-    setPopularSectionLabel(section);
+    setPopularSectionID(section);
   };
+
+  console.log(categories);
 
   return (
     <Layout>
@@ -99,7 +106,7 @@ export default function Home() {
               <li
                 style={{
                   borderBottom:
-                    popularSectionLabel === item.label
+                    popularSectionID === item.category_id
                       ? `2px solid ${colors.primary}`
                       : `2px solid #fff`,
                 }}
@@ -108,11 +115,11 @@ export default function Home() {
                 <button
                   style={{
                     color:
-                      popularSectionLabel === item.label
+                      popularSectionID === item.category_id
                         ? colors.primary
                         : colors.text_alternative,
                   }}
-                  onClick={() => handleChangePopularSection(item.label)}
+                  onClick={() => handleChangePopularSection(item.category_id)}
                 >
                   {item.label}
                 </button>
@@ -121,8 +128,9 @@ export default function Home() {
           </ul>
 
           <div className="products">
-            {popularSection
-              .filter((i) => i.section === popularSectionLabel)
+            {dataArray
+              .filter((i) => i.category_id === popularSectionID)
+              .slice(0, 3)
               .map((item, index) => (
                 <Link
                   href={`/produto/${item.id}`}
@@ -130,7 +138,7 @@ export default function Home() {
                   className="product"
                 >
                   <div className="img">
-                    <img src={item.img} alt="" />
+                    <img src={item.banner} alt="" />
                   </div>
                   <div className="product-name">{item.name}</div>
                   <div className="product-price">{formatter(item.price)}</div>
@@ -146,7 +154,7 @@ export default function Home() {
               plataformas, fique a vontade pra escolher algum jogo de nossa
               coleção
             </p>
-            <Link href={`/coleção/tudo`}>Ir para coleção</Link>
+            <Link href={`/busca`}>Ir para coleção</Link>
           </div>
           <img
             src="https://play-lh.googleusercontent.com/p7rx-TDw8mSXmnN5oreMbOrC6FTumoRsnz8rDxUHL6-7xYtLlzcyj1GS8UKyBx5eJg"
@@ -175,7 +183,7 @@ export default function Home() {
             ))}
           </Swiper>
           <div className="button">
-            <Link href={`2`}>Ver Tudo</Link>
+            <Link href={`/busca`}>Ver Tudo</Link>
           </div>
         </div>
         <div className="item-carossel">
@@ -200,10 +208,34 @@ export default function Home() {
             ))}
           </Swiper>
           <div className="button">
-            <Link href={`2`}>Ver Tudo</Link>
+            <Link href={`/busca`}>Ver Tudo</Link>
           </div>
         </div>
       </Container>
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  dataArray: gamesType[];
+}> = async ({ res }) => {
+  res.setHeader(
+    `Cache-Control`,
+    `public, s-maxage=10, stale-while-revalidate=59`,
+  );
+
+  let dataArray: gamesType[] = [];
+
+  const dbRef = ref(getDatabase());
+
+  const response = await get(child(dbRef, `products/`));
+  if (response.exists()) {
+    dataArray = Object.values(response.val());
+  }
+
+  return {
+    props: {
+      dataArray,
+    },
+  };
+};

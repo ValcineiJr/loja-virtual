@@ -110,12 +110,18 @@ export const Container = styled.div`
 
         text-align: center;
 
-        img {
-          object-fit: cover;
+        background-color: #fff;
+        padding-bottom: 30px;
+
+        /* max-height: 419px; */
+
+        .img {
+          max-width: 350px;
+          max-height: 350px;
+          border-radius: 5px;
         }
 
-        img,
-        .img {
+        img {
           width: 100%;
           height: 100%;
           border-radius: 5px;

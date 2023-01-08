@@ -3,6 +3,11 @@ import styled from 'styled-components';
 export const Container = styled.div`
   position: relative;
 
+  .row {
+    display: flex;
+    gap: 40px;
+  }
+
   .email {
     height: 40px;
     padding: 16px;

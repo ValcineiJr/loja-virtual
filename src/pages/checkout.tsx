@@ -11,6 +11,7 @@ import InputComponent from '@/components/Input';
 import InputMaskComponent from '@/components/InputMask';
 import formatter from '@/utils/CurrencyFormatter';
 import { useCart } from '@/hooks/useCart';
+import Link from 'next/link';
 
 // import { Container } from './styles';
 
@@ -83,22 +84,11 @@ const Checkout: React.FC = () => {
     return result.toLocaleDateString();
   }
 
+  const user = true;
+
   return (
     <Layout>
       <Container>
-        {/* <div className="address">
-              <span className="number">1</span>
-              <span className="title">Endereço de entrega</span>
-              <div className="info">
-                <p>{user?.name}</p>
-                <p>{user?.address}</p>
-                <p>{user?.numero}</p>
-                <p>{user?.bairro}</p>
-                <p>
-                  {user?.cidade}, {user?.estado} {user?.cep}
-                </p>
-              </div>
-            </div> */}
         <div className="header">
           <div className="number">1</div>
           <p className="title">Revisar itens e envio</p>
@@ -120,224 +110,364 @@ const Checkout: React.FC = () => {
           <p className="frete">Entrega estimada: {formatDate()}</p>
         </div>
       </Container>
-      <Container>
-        <div className="header">
-          <div className="number">2</div>
-          <p className="title">Novo cadastro</p>
-        </div>
+      {user ? (
+        <>
+          <Container>
+            <div className="header">
+              <div className="number">2</div>
+              <p className="title">Dados cadastrais</p>
+            </div>
+            <div className="content">
+              <div className="row">
+                <p className="key">Nome: </p>
+                <p className="value">valcinei furtado cardozo junior</p>
+              </div>
+              <div className="row">
+                <p className="key">E-mail: </p>
+                <p className="value">valcineifurtadotrab@gmail.com</p>
+              </div>
+              <div className="row">
+                <p className="key">Celular: </p>
+                <p className="value">(21)98880-0405</p>
+              </div>
+              <div className="row">
+                <p className="key">CPF: </p>
+                <p className="value">175.576.017-50</p>
+              </div>
+            </div>
+          </Container>
+          <Container>
+            <div className="header">
+              <div className="number">3</div>
+              <p className="title">Endereço</p>
+            </div>
+            <div className="content" style={{ padding: 10 }}>
+              <div className="row" style={{ padding: 0 }}>
+                <p className="value">Rua birigui</p>
+              </div>
+              <div className="row" style={{ padding: 0 }}>
+                <p className="value">76</p>
+              </div>
+              <div className="row" style={{ padding: 0 }}>
+                <p className="value">Realengo</p>
+              </div>
+              <div className="row" style={{ padding: 0 }}>
+                <p className="value">Rio de Janeiro, RJ 21765-430</p>
+              </div>
+            </div>
+          </Container>
+          <Container>
+            <div className="header">
+              <div className="number">4</div>
+              <p className="title">Pagamento</p>
+            </div>
+            <div className="card">
+              <Cards
+                locale={{ valid: `validade` }}
+                placeholders={{ name: `Seu Nome Aqui` }}
+                cvc={CCcvc}
+                expiry={CCexpiry}
+                focused={CCfocus}
+                name={CCName}
+                number={CCNumber}
+              />
+            </div>
 
-        <form>
-          <InputComponent
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
-            label="E-mail"
-            type="email"
-          />
-          <InputComponent
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            label="Criar senha"
-            errorMsg="Mínimo 5 caracteres"
-            errorCondition={password.length < 5}
-          />
-          <InputComponent
-            type="password"
-            value={confirm_password}
-            onChange={(e) => setConfirm_password(e.target.value)}
-            label="Confirmar senha"
-            errorMsg="As senhas devem ser iguais"
-            errorCondition={password !== confirm_password}
-          />
-          <InputComponent
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            label="Nome completo"
-            errorMsg="Digite o nome completo"
-            errorCondition={!name.includes(` `)}
-          />
-          <InputMaskComponent
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            mask={`999.999.999-99`}
-            maskPlaceholder=""
-            type="text"
-            label="CPF"
-          />
-          <InputMaskComponent
-            value={birth_date}
-            onChange={(e) => setBirth_date(e.target.value)}
-            mask={`99/99/9999`}
-            maskPlaceholder=""
-            type="text"
-            label="Data de nascimento"
-          />
-          <InputMaskComponent
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-            mask={`(99)99999-9999`}
-            maskPlaceholder=""
-            type="text"
-            label="Celular"
-          />
-        </form>
-      </Container>
+            <form>
+              <InputMaskComponent
+                mask="9999 9999 9999 9999"
+                maskPlaceholder=""
+                type="tel"
+                name="number"
+                label="Número do Cartão"
+                value={CCNumber}
+                onChange={(e) => setCCNumber(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputComponent
+                type="tel"
+                name="name"
+                label="Nome do Titular"
+                placeholder="Como escrito no cartão"
+                value={CCName}
+                onChange={(e) => setCCName(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputMaskComponent
+                mask="99/99"
+                maskPlaceholder=""
+                type="text"
+                name="expiry"
+                label="Validade"
+                value={CCexpiry}
+                onChange={(e) => setCCExpiry(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputComponent
+                type="text"
+                name="cvc"
+                label="Cód. de Segurança"
+                maxLength={3}
+                value={CCcvc}
+                onChange={(e) => setCCCvc(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={() => setCCFocus(`name`)}
+              />
+            </form>
+          </Container>
+          <Container>
+            <div className="header">
+              <div className="number">5</div>
+              <p className="title">Finalizar Compra</p>
+            </div>
+            <div className="resumo">
+              <p>Resumo do pedido</p>
+              <div className="row">
+                <span className="ligh">Itens:</span>
+                <span className="ligh">
+                  {formatter(totalCartValue + frete.value)}
+                </span>
+              </div>
+              <div className="row">
+                <span className="ligh">Frete:</span>
+                <span className="ligh">{formatter(frete.value)}</span>
+              </div>
+            </div>
 
-      <Container>
-        <div className="header">
-          <div className="number">3</div>
-          <p className="title">Entrega</p>
-        </div>
+            <button
+              style={{ marginTop: 20 }}
+              className="site-button-fill fluid-width"
+              type="submit"
+            >
+              Finalizar compra
+            </button>
+          </Container>
+        </>
+      ) : (
+        <>
+          <Container>
+            <div className="header">
+              <div className="number">2</div>
+              <p className="title">Novo cadastro</p>
+              <Link href="/login" className="subtitle">
+                Já tenho cadastro
+              </Link>
+            </div>
 
-        <form>
-          <InputMaskComponent
-            mask="99999-999"
-            value={userCep}
-            onChange={(e) => setCep(e.target.value)}
-            type="text"
-            label="CEP"
-            blurPlus={buscarCep}
-            errorCondition={!isCepValid}
-            errorMsg="Cep inválido"
-          />
-          <InputComponent
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            type="text"
-            label="Endereço"
-            disabled
-          />
-          <InputComponent
-            value={number}
-            onChange={(e) => setNumber(e.target.value)}
-            type="text"
-            label="Número"
-          />
-          <InputComponent
-            type="text"
-            value={complement}
-            onChange={(e) => setComplement(e.target.value)}
-            label="Complemento"
-          />
-          <InputComponent
-            type="text"
-            value={reference}
-            onChange={(e) => setReference(e.target.value)}
-            label="Referência"
-          />
-          <InputComponent
-            value={neighborhood}
-            onChange={(e) => setNeighborhood(e.target.value)}
-            type="text"
-            label="Bairro"
-            disabled
-          />
-          <InputComponent
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            type="text"
-            label="Cidade"
-            disabled
-          />
-          <InputComponent
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-            type="text"
-            label="Estado"
-            disabled
-          />
-        </form>
-      </Container>
+            <form>
+              <InputComponent
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                label="E-mail"
+                type="email"
+              />
+              <InputComponent
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                label="Criar senha"
+                errorMsg="Mínimo 5 caracteres"
+                errorCondition={password.length < 5}
+              />
+              <InputComponent
+                type="password"
+                value={confirm_password}
+                onChange={(e) => setConfirm_password(e.target.value)}
+                label="Confirmar senha"
+                errorMsg="As senhas devem ser iguais"
+                errorCondition={password !== confirm_password}
+              />
+              <InputComponent
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                label="Nome completo"
+                errorMsg="Digite o nome completo"
+                errorCondition={!name.includes(` `)}
+              />
+              <InputMaskComponent
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                mask={`999.999.999-99`}
+                maskPlaceholder=""
+                type="text"
+                label="CPF"
+              />
+              <InputMaskComponent
+                value={birth_date}
+                onChange={(e) => setBirth_date(e.target.value)}
+                mask={`99/99/9999`}
+                maskPlaceholder=""
+                type="text"
+                label="Data de nascimento"
+              />
+              <InputMaskComponent
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                mask={`(99)99999-9999`}
+                maskPlaceholder=""
+                type="text"
+                label="Celular"
+              />
+            </form>
+          </Container>
 
-      <Container>
-        <div className="header">
-          <div className="number">4</div>
+          <Container>
+            <div className="header">
+              <div className="number">3</div>
+              <p className="title">Entrega</p>
+            </div>
 
-          <p className="title">Pagamento</p>
-        </div>
-        <div className="card">
-          <Cards
-            locale={{ valid: `validade` }}
-            placeholders={{ name: `Seu Nome Aqui` }}
-            cvc={CCcvc}
-            expiry={CCexpiry}
-            focused={CCfocus}
-            name={CCName}
-            number={CCNumber}
-          />
-        </div>
+            <form>
+              <InputMaskComponent
+                mask="99999-999"
+                value={userCep}
+                onChange={(e) => setCep(e.target.value)}
+                type="text"
+                label="CEP"
+                blurPlus={buscarCep}
+                errorCondition={!isCepValid}
+                errorMsg="Cep inválido"
+              />
+              <InputComponent
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                type="text"
+                label="Endereço"
+                disabled
+              />
+              <InputComponent
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                type="text"
+                label="Número"
+              />
+              <InputComponent
+                type="text"
+                value={complement}
+                onChange={(e) => setComplement(e.target.value)}
+                label="Complemento"
+              />
+              <InputComponent
+                type="text"
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
+                label="Referência"
+              />
+              <InputComponent
+                value={neighborhood}
+                onChange={(e) => setNeighborhood(e.target.value)}
+                type="text"
+                label="Bairro"
+                disabled
+              />
+              <InputComponent
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                type="text"
+                label="Cidade"
+                disabled
+              />
+              <InputComponent
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                type="text"
+                label="Estado"
+                disabled
+              />
+            </form>
+          </Container>
 
-        <form>
-          <InputMaskComponent
-            mask="9999 9999 9999 9999"
-            maskPlaceholder=""
-            type="tel"
-            name="number"
-            label="Número do Cartão"
-            value={CCNumber}
-            onChange={(e) => setCCNumber(e.target.value)}
-            onFocus={handleInputFocus}
-          />
-          <InputComponent
-            type="tel"
-            name="name"
-            label="Nome do Titular"
-            placeholder="Como escrito no cartão"
-            value={CCName}
-            onChange={(e) => setCCName(e.target.value)}
-            onFocus={handleInputFocus}
-          />
-          <InputMaskComponent
-            mask="99/99"
-            maskPlaceholder=""
-            type="text"
-            name="expiry"
-            label="Validade"
-            value={CCexpiry}
-            onChange={(e) => setCCExpiry(e.target.value)}
-            onFocus={handleInputFocus}
-          />
-          <InputComponent
-            type="text"
-            name="cvc"
-            label="Cód. de Segurança"
-            maxLength={3}
-            value={CCcvc}
-            onChange={(e) => setCCCvc(e.target.value)}
-            onFocus={handleInputFocus}
-            onBlur={() => setCCFocus(`name`)}
-          />
-        </form>
-      </Container>
+          <Container>
+            <div className="header">
+              <div className="number">4</div>
 
-      <Container>
-        <div className="header">
-          <div className="number">5</div>
-          <p className="title">Finalizar Compra</p>
-        </div>
-        <div className="resumo">
-          <p>Resumo do pedido</p>
-          <div className="row">
-            <span className="ligh">Itens:</span>
-            <span className="ligh">
-              {formatter(totalCartValue + frete.value)}
-            </span>
-          </div>
-          <div className="row">
-            <span className="ligh">Frete:</span>
-            <span className="ligh">{formatter(frete.value)}</span>
-          </div>
-        </div>
+              <p className="title">Pagamento</p>
+            </div>
+            <div className="card">
+              <Cards
+                locale={{ valid: `validade` }}
+                placeholders={{ name: `Seu Nome Aqui` }}
+                cvc={CCcvc}
+                expiry={CCexpiry}
+                focused={CCfocus}
+                name={CCName}
+                number={CCNumber}
+              />
+            </div>
 
-        <button
-          style={{ marginTop: 20 }}
-          className="site-button-fill fluid-width"
-          type="submit"
-        >
-          Finalizar compra
-        </button>
-      </Container>
+            <form>
+              <InputMaskComponent
+                mask="9999 9999 9999 9999"
+                maskPlaceholder=""
+                type="tel"
+                name="number"
+                label="Número do Cartão"
+                value={CCNumber}
+                onChange={(e) => setCCNumber(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputComponent
+                type="tel"
+                name="name"
+                label="Nome do Titular"
+                placeholder="Como escrito no cartão"
+                value={CCName}
+                onChange={(e) => setCCName(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputMaskComponent
+                mask="99/99"
+                maskPlaceholder=""
+                type="text"
+                name="expiry"
+                label="Validade"
+                value={CCexpiry}
+                onChange={(e) => setCCExpiry(e.target.value)}
+                onFocus={handleInputFocus}
+              />
+              <InputComponent
+                type="text"
+                name="cvc"
+                label="Cód. de Segurança"
+                maxLength={3}
+                value={CCcvc}
+                onChange={(e) => setCCCvc(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={() => setCCFocus(`name`)}
+              />
+            </form>
+          </Container>
+
+          <Container>
+            <div className="header">
+              <div className="number">5</div>
+              <p className="title">Finalizar Compra</p>
+            </div>
+            <div className="resumo">
+              <p>Resumo do pedido</p>
+              <div className="row">
+                <span className="ligh">Itens:</span>
+                <span className="ligh">
+                  {formatter(totalCartValue + frete.value)}
+                </span>
+              </div>
+              <div className="row">
+                <span className="ligh">Frete:</span>
+                <span className="ligh">{formatter(frete.value)}</span>
+              </div>
+            </div>
+
+            <button
+              style={{ marginTop: 20 }}
+              className="site-button-fill fluid-width"
+              type="submit"
+            >
+              Finalizar compra
+            </button>
+          </Container>
+        </>
+      )}
     </Layout>
   );
 };

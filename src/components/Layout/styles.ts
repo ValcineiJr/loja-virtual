@@ -22,6 +22,72 @@ export const Container = styled.div<ContainerProps>`
 
     height: 160px;
 
+    .header-wrapper {
+      display: flex;
+    }
+
+    @media (min-width: 768px) {
+      .row {
+        max-width: 1000px;
+        margin: 0 auto;
+
+        .login {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          border: 1px #ccc solid;
+
+          transition: all 0.6s;
+
+          &:hover {
+            border-color: ${({ theme }) => theme.colors.primary};
+          }
+
+          padding: 10px;
+
+          border-radius: 10px;
+
+          font-size: 1.4rem;
+
+          color: white;
+
+          margin-right: 40px;
+
+          .icon {
+            font-size: 2.4rem;
+          }
+
+          .color {
+            color: ${({ theme }) => theme.colors.primary};
+          }
+        }
+
+        /* background: green; */
+      }
+
+      padding-bottom: 0;
+
+      flex-direction: row;
+      align-items: center;
+
+      .two {
+        width: 100% !important;
+      }
+
+      .input {
+        margin-top: 0 !important;
+      }
+
+      .mobile-cart {
+        display: none !important;
+      }
+
+      .menu-mobile {
+        display: none !important;
+      }
+    }
+
     .sub-menu {
       display: flex;
       flex-direction: column;
@@ -101,7 +167,10 @@ export const Container = styled.div<ContainerProps>`
     .row {
       display: flex;
       justify-content: space-between;
-      width: 100%;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
 
       .input {
         margin-top: 20px;
@@ -256,6 +325,169 @@ export const Container = styled.div<ContainerProps>`
 
       font-size: 2.4rem;
       color: white;
+    }
+  }
+
+  .three,
+  .desktop-menu {
+    display: none !important;
+
+    @media (min-width: 768px) {
+      display: flex !important;
+    }
+  }
+
+  .desktop-menu {
+    width: 100%;
+    height: 50px;
+
+    z-index: 9999;
+
+    position: sticky;
+    top: 0;
+
+    background: ${({ theme }) => theme.colors.secondary};
+
+    border-top: 4px solid ${({ theme }) => theme.colors.primary};
+
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+      rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+
+    ul {
+      display: flex;
+
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      gap: 20px;
+
+      li {
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        flex: 1;
+        height: 40px;
+
+        font-size: 1.6rem;
+        color: white;
+
+        position: relative;
+
+        transition: all 0.6s;
+
+        &.menu {
+          :nth-last-child(n + 2) {
+            ::after {
+              content: '|';
+              position: absolute;
+              right: 0;
+              top: 10px;
+            }
+          }
+        }
+
+        position: relative;
+
+        #show {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .sub-menu {
+          visibility: hidden;
+          opacity: 0;
+          width: 100%;
+          /* height: 300px; */
+
+          transition: all 0.6s;
+
+          background-color: ${({ theme }) => theme.colors.primary};
+
+          position: absolute;
+          top: 40px;
+
+          z-index: 20;
+
+          ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+
+            position: relative;
+
+            #show {
+              opacity: 1;
+              visibility: visible;
+            }
+
+            .sub-sub-menu {
+              visibility: hidden;
+              opacity: 0;
+              width: 100%;
+              height: 300px;
+
+              transition: all 0.6s;
+
+              background-color: white;
+
+              position: absolute;
+              top: 0;
+              left: 100%;
+
+              z-index: 20;
+
+              li {
+                color: ${({ theme }) => theme.colors.text_alternative};
+              }
+            }
+
+            li {
+              flex: 1;
+              padding: 10px;
+              position: relative;
+              display: flex;
+
+              justify-content: flex-start;
+
+              a {
+                flex: 1;
+                color: white;
+              }
+
+              &.sub {
+                ::after {
+                  content: '>';
+                  position: absolute;
+                  right: 10px;
+                  top: 10px;
+                }
+              }
+            }
+
+            li:hover {
+              background-color: white;
+
+              color: ${({ theme }) => theme.colors.primary} !important;
+
+              a {
+                color: ${({ theme }) => theme.colors.primary} !important;
+              }
+            }
+          }
+        }
+
+        cursor: pointer;
+
+        span {
+          display: flex;
+
+          justify-content: center;
+          align-items: center;
+        }
+      }
     }
   }
 

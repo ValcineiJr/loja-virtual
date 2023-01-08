@@ -87,53 +87,58 @@ const Carrinho: React.FC = () => {
                 <h1>Carrinho de compras</h1>
                 <p className="price-text">Preço</p>
               </div>
-              {cart?.map((item) => {
-                return (
-                  <div key={item.id} className="item">
-                    <div className="separator">
-                      <div className="img-product">
-                        <img src={item.banner} alt="product" />
-                      </div>
-                      <div className="info">
-                        <p className="name-product bold">{item.name}</p>
-                        <div className="options">
-                          <label htmlFor="">Quantidade: </label>
-                          <div className="separator quantity">
+              <div className="wrapper-cart">
+                {cart?.map((item) => {
+                  return (
+                    <div key={item.id} className="item">
+                      <div className="separator">
+                        <div className="img-product">
+                          <img src={item.banner} alt="product" />
+                        </div>
+                        <div className="info">
+                          <p className="name-product bold">{item.name}</p>
+                          <div className="options">
+                            <label htmlFor="">Quantidade: </label>
+                            <div className="separator quantity">
+                              <button
+                                onClick={() => decreaseItemCartQuantity(item)}
+                                className=" site-button"
+                              >
+                                <HiChevronLeft className="icon" />
+                              </button>
+                              <input
+                                type="numeric"
+                                readOnly
+                                value={item.quantity}
+                                placeholder="1"
+                              />
+                              <button
+                                onClick={() => increaseItemCartQuantity(item)}
+                                className=" site-button"
+                              >
+                                <HiChevronRight className="icon" />
+                              </button>
+                            </div>
+
                             <button
-                              onClick={() => decreaseItemCartQuantity(item)}
-                              className=" site-button"
+                              onClick={() => removeItemFromCart(item)}
+                              className="exclude site-button-fill"
                             >
-                              <HiChevronLeft className="icon" />
-                            </button>
-                            <input
-                              type="numeric"
-                              readOnly
-                              value={item.quantity}
-                              placeholder="1"
-                            />
-                            <button
-                              onClick={() => increaseItemCartQuantity(item)}
-                              className=" site-button"
-                            >
-                              <HiChevronRight className="icon" />
+                              Excluir
                             </button>
                           </div>
-
-                          <button
-                            onClick={() => removeItemFromCart(item)}
-                            className="exclude site-button-fill"
-                          >
-                            Excluir
-                          </button>
                         </div>
                       </div>
-                    </div>
 
-                    <p className="price">{formatter(item.price)}</p>
-                  </div>
-                );
-              })}
+                      <p className="price">{formatter(item.price)}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          </section>
+
+          <aside>
             <div className="cep">
               <div className="header">
                 <p>Calcular frete</p>
@@ -186,9 +191,6 @@ const Carrinho: React.FC = () => {
                 </ul>
               )}
             </div>
-          </section>
-
-          <aside>
             <div className="resume">
               <div className="header">
                 <p>RESUMO</p>

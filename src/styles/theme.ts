@@ -6,6 +6,8 @@ const theme = {
     text_primary: `#EDF2F4`,
     text_secondary: `#888098`,
     text_alternative: `#1b1b1b`,
+    danger: `#DC3545`,
+    success: `#28A745`,
   },
 };
 

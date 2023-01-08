@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
+import { gamesType } from '@/contexts/ProductContext';
 import formatter from '@/utils/CurrencyFormatter';
-import { gamesType } from '@/utils/dummyData';
+
 import Link from 'next/link';
 import React, { useState } from 'react';
-
-import ReactPaginate from 'react-paginate';
 
 import { Container, ItemsContainer, MyPaginate } from './styles';
 

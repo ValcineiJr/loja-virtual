@@ -16,6 +16,33 @@ export const Container = styled.div`
     }
   }
 
+  .content {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+
+    .row {
+      /* background-color: red; */
+      align-items: flex-start;
+      justify-content: flex-start;
+
+      width: 100%;
+
+      padding: 0;
+
+      font-size: 1.8rem !important;
+
+      padding: 10px;
+
+      .key {
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      .value {
+        color: ${({ theme }) => theme.colors.text_secondary};
+      }
+    }
+  }
+
   .row {
     display: flex;
     align-items: center;
@@ -43,9 +70,17 @@ export const Container = styled.div`
 
   .header {
     display: flex;
+    align-items: center;
     gap: 20px;
 
     margin-bottom: 10px;
+
+    .subtitle {
+      margin-left: auto;
+      color: ${({ theme }) => theme.colors.primary};
+      font-size: 1.6rem;
+      text-decoration: underline;
+    }
   }
 
   .number,

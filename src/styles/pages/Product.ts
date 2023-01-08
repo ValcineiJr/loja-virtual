@@ -6,6 +6,38 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
 
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: 767px) {
+      flex-direction: row;
+
+      .image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          max-width: 276px;
+        }
+      }
+
+      .separator {
+        display: flex;
+        flex: 2;
+        flex-direction: column;
+
+        .info {
+          justify-items: flex-start;
+        }
+
+        /* background-color: red; */
+      }
+    }
+  }
+
   h3 {
     font-size: 3rem;
     color: ${({ theme }) => theme.colors.text_alternative};
