@@ -1,4 +1,4 @@
-# Nome do projeto
+# Salão de Jogos
 
 <!---Esses são exemplos. Veja https://shields.io para outras pessoas ou para personalizar este conjunto de escudos. Você pode querer incluir dependências, status do projeto e informações de licença aqui--->
 
@@ -8,7 +8,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/iuricode/README-template?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/iuricode/README-template?style=for-the-badge)
 
-<img src="exemplo-image.png" alt="exemplo imagem">
+<img src="site.png" alt="exemplo imagem">
 
 > Esse projeto foi criado com o intuito de utilizar melhores práticas e criar um portifolio
 
@@ -69,7 +69,7 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
 <table>
   <tr>
     <td align="center">
-      <a href="#">
+      <a href="https://github.com/ValcineiJr">
         <img src="https://avatars3.githubusercontent.com/u/22758334?s=460&u=da34ea9a0b961f9c4a9e0b58318ada1d9c4a8cd2&v=4" width="100px;" alt="Foto do Valcinei Jr no GitHub"/><br>
         <sub>
           <b>Valcinei Jr</b>
@@ -79,4 +79,4 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
   </tr>
 </table>
 
-[⬆ Voltar ao topo](#nome-do-projeto)<br>
+[⬆ Voltar ao topo](#salão-de-jogos)<br>
