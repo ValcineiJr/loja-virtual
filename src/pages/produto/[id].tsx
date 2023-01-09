@@ -22,23 +22,25 @@ import { useProduct } from '@/hooks/useProduct';
 import { gamesType } from '@/contexts/ProductContext';
 import { useCart } from '@/hooks/useCart';
 import Link from 'next/link';
-import { child, get, getDatabase, ref } from 'firebase/database';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+// import { child, get, getDatabase, ref } from 'firebase/database';
+// import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { useFetch } from '@/hooks/useFetch';
 
-const produto = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const produto = () => {
+  // { data }: InferGetStaticPropsType<typeof getStaticProps>
   const router = useRouter();
   const [cep, setCep] = useState(``);
 
   const [loadingCep, setLoadingCep] = useState(false);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [freteList, setFreteList] = useState<FreteData[]>([]);
 
-  // const { id } = router.query;
-  // const { data } = useFetch<gamesType>(
-  //   `api/product/read/product/${id}`,
-  //   setLoading,
-  // );
+  const { id } = router.query;
+  const { data } = useFetch<gamesType>(
+    `api/product/read/product/${id}`,
+    setLoading,
+  );
 
   const { categories, addItemsToRecents } = useProduct();
   const { cart, setCartToStorage, setFrete } = useCart();
@@ -283,36 +285,36 @@ const produto = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
 export default produto;
 
-export async function getStaticPaths() {
-  let dataArray: gamesType[] = [];
+// export async function getStaticPaths() {
+//   let dataArray: gamesType[] = [];
 
-  const dbRef = ref(getDatabase());
+//   const dbRef = ref(getDatabase());
 
-  const response = await get(child(dbRef, `products/`));
-  if (response.exists()) {
-    dataArray = Object.values(response.val());
-  }
+//   const response = await get(child(dbRef, `products/`));
+//   if (response.exists()) {
+//     dataArray = Object.values(response.val());
+//   }
 
-  const paths = dataArray.map((post) => ({
-    params: { id: post.id },
-  }));
+//   const paths = dataArray.map((post) => ({
+//     params: { id: post.id },
+//   }));
 
-  return {
-    paths,
-    fallback: false, // can also be true or 'blocking'
-  };
-}
+//   return {
+//     paths,
+//     fallback: true, // can also be true or 'blocking'
+//   };
+// }
 
-export const getStaticProps: GetStaticProps<{
-  data: gamesType;
-}> = async (context) => {
-  const res = await fetch(
-    `http://localhost:3000/api/product/read/product/${context?.params?.id}`,
-  );
-  const data = await res.json();
+// export const getStaticProps: GetStaticProps<{
+//   data: gamesType;
+// }> = async (context) => {
+//   const res = await fetch(
+//     `http://localhost:3000/api/product/read/product/${context?.params?.id}`,
+//   );
+//   const data = await res.json();
 
-  return {
-    // Passed to the page component as props
-    props: { data },
-  };
-};
+//   return {
+//     // Passed to the page component as props
+//     props: { data },
+//   };
+// };
