@@ -28,9 +28,6 @@ export const Container = styled.div<ContainerProps>`
 
     @media (min-width: 768px) {
       .row {
-        max-width: 1000px;
-        margin: 0 auto;
-
         .login {
           display: flex;
           align-items: center;
@@ -71,8 +68,21 @@ export const Container = styled.div<ContainerProps>`
       flex-direction: row;
       align-items: center;
 
+      .two,
+      .one,
+      .three {
+        flex: 1 !important;
+      }
+
       .two {
-        width: 100% !important;
+        flex: 2 !important;
+      }
+
+      .three {
+        /* background-color: red; */
+        display: flex;
+
+        justify-content: flex-end !important;
       }
 
       .input {
