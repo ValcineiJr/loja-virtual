@@ -309,7 +309,7 @@ export default produto;
 //   data: gamesType;
 // }> = async (context) => {
 //   const res = await fetch(
-//     `http://localhost:3000/api/product/read/product/${context?.params?.id}`,
+//     `https://loja-virtual-gamma.vercel.app/api/product/read/product/${context?.params?.id}`,
 //   );
 //   const data = await res.json();
 
